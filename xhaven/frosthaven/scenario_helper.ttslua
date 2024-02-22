@@ -1,0 +1,358 @@
+-- Using the following custom item
+--
+-- https://cdn.r35.net/tts-modding/objects/rounded-squares/token-rectangle-black-v1.png
+
+local Colors = require("r35_tts.xhaven.common.colors")
+local ScenarioLevel = require("r35_tts.xhaven.common.scenario_level")
+
+---@shape ScenarioLevelHelperState
+---@field partyLevels table<int>
+---@field difficultyModifier int
+
+local WidgetVersion = "1.0.0"
+local helper = nil
+
+-- for toggling the alphas
+local bottomRowAlphas = {
+  Locked = 0.2,
+  Unlocked = 1.0,
+}
+
+local buttonLookup = {}
+
+---@type ScenarioLevelHelperState
+local state = {
+  playerLevels = {},
+  difficultyModifier = {},
+  computed = {},
+  locked = false,
+  bottomRowAlpha = 1,
+}
+
+function onLoad(savedData)
+  -- If there is saved data then attempt to load it
+  if savedData ~= "" then
+    -- JSON decode the state data string (savedData)
+    local loadedData = JSON.decode(savedData)
+    -- We expect the playerLevels key to exist at minimum
+    if loadedData ~= nil and loadedData["playerLevels"] ~= nil then
+      -- This is a little lumpy, but effective to ward against the nils
+      status, response = pcall(ScenarioLevel.fromState, ScenarioLevel, loadedData)
+      if status and response ~= nil then
+        helper = response
+        state = loadedData
+      end
+    end
+  end
+
+  -- If there was no state, or the state is corrupted then create a helper
+  if helper == nil then
+    helper = ScenarioLevel:new(nil, nil, nil, nil)
+  end
+
+  -- Update the local state
+  self.setLock(state.locked)
+
+  -- Update the initial state with the helper being employed here
+  updateState()
+
+  -- Create all the buttons
+  createAll()
+
+  -- Update the alpha if required
+  handleLockedStatusChange()
+
+  -- Handle the final updates for the buttons
+  updateLButtonLabel()
+  updateTopButtonLabels()
+  updateBottomButtonLabels()
+end
+
+function updateState()
+  if state.bottomRowAlpha == nil then
+    state.bottomRowAlpha = getAlphaForLockState(state.locked)
+  end
+
+  local newState = helper:toState()
+  newState.locked = state.locked
+  newState.bottomRowAlpha = state.bottomRowAlpha
+
+  state = newState
+  self.setDescription("Frosthaven Scenario Helper by r35krag0th")
+end
+
+function onSave()
+  return JSON.encode(state)
+end
+
+function doNothing() end
+
+function getAlphaForLockState(value)
+  if value then
+    return bottomRowAlphas.Locked
+  end
+  return bottomRowAlphas.Unlocked
+end
+
+function handleLockedStatusChange()
+  local expectedAlpha = getAlphaForLockState(self.getLock())
+
+  if state.locked == self.getLock() then
+    if expectedAlpha == state.bottomRowAlpha then
+      return
+    end
+  end
+
+  state.bottomRowAlpha = expectedAlpha
+  state.locked = self.getLock()
+
+  updateLButtonLabel()
+  updateBottomButtonLabels()
+  updateState()
+end
+
+function updateLButtonLabel()
+  local L = helper:L()
+
+  self.editButton({
+    index = buttonLookup.L,
+    label = L["roundedDown"],
+    tooltip = "Raw: " .. L["raw"],
+    font_color = Colors:rgba("L", state.bottomRowAlpha),
+  })
+end
+
+function updateTopButtonLabels()
+  self.editButton({
+    index = buttonLookup.Gold,
+    label = helper:goldPerCoin(),
+    tooltip = helper:goldPerCoin() .. " per coin"
+  })
+
+  self.editButton({
+    index = buttonLookup.XP,
+    label = helper:bonusExperience(),
+    tooltip = helper:bonusExperience() .. " XP"
+  })
+
+  self.editButton({
+    index = buttonLookup.Trap,
+    label = helper:trapDamage(),
+    tooltip = "Traps are " .. helper:trapDamage() .. " dmg"
+  })
+
+  self.editButton({
+    index = buttonLookup.Hazardous,
+    label = helper:hazardousTerrainDamage(),
+    tooltip = "Hazardous Terrain do " .. helper:hazardousTerrainDamage() .. " dmg"
+  })
+end
+
+function updateBottomButtonLabels()
+    self.editButton({
+      index = buttonLookup.Player1,
+      label = helper:getLevel(1),
+      tooltip = "Red Player is level " .. helper:getLevel(1),
+      font_color = Colors:rgba("Red", state.bottomRowAlpha),
+    })
+
+    self.editButton({
+      index = buttonLookup.Player2,
+      label = helper:getLevel(2),
+      tooltip = "White Player is level " .. helper:getLevel(2),
+      font_color = Colors:rgba("White", state.bottomRowAlpha),
+    })
+
+    self.editButton({
+      index = buttonLookup.Player3,
+      label = helper:getLevel(3),
+      tooltip = "Blue Player is level " .. helper:getLevel(3),
+      font_color = Colors:rgba("Blue", state.bottomRowAlpha),
+    })
+
+    self.editButton({
+      index = buttonLookup.Player4,
+      label = helper:getLevel(4),
+      tooltip = "Green Player is level " .. helper:getLevel(4),
+      font_color = Colors:rgba("Green", state.bottomRowAlpha),
+    })
+end
+
+function handleLevelChange(playerNumber, shouldDecrement)
+  if self.getLock() then
+    return
+  end
+
+
+  local previousL = helper:L()
+
+  if shouldDecrement then
+    helper:decrement(playerNumber)
+  else
+    helper:increment(playerNumber)
+  end
+
+  local newL = helper:L()
+
+  self.editButton({
+    index = buttonLookup["Player" .. playerNumber],
+    label = helper:getLevel(playerNumber)
+  })
+
+  self.editButton({
+    index = buttonLookup.L,
+    label = newL.roundedDown,
+    tooltip = "Raw: " .. newL.raw,
+  })
+
+  if previousL.roundedDown ~= helper:L().roundedDown then
+    updateTopButtonLabels()
+  end
+end
+
+function changePlayerA(obj, sender, alt_click) handleLevelChange(1, alt_click) end
+function changePlayerB(obj, sender, alt_click) handleLevelChange(2, alt_click) end
+function changePlayerC(obj, sender, alt_click) handleLevelChange(3, alt_click) end
+function changePlayerD(obj, senter, alt_click) handleLevelChange(4, alt_click) end
+
+-- X = <--->        [horizontal]
+-- Y = Up/Down      [vert]
+-- Z = Forward/Back [horizontal]
+
+function createAll()
+  local buttonIndex = 0
+  local leftBigButtonHeight = 800
+  local leftBigButtonWidth = 500
+  self.createButton({
+    label="xxx",
+    click_function="doNothing",
+    tooltip="",
+    function_owner=self,
+    position={
+      x=-1.8,
+      y=0.05,
+      z=0.0,
+    },
+    height=leftBigButtonHeight,
+    width=leftBigButtonWidth,
+    alignment = 3,
+    scale={x=1.5, y=1.5, z=1.5},
+    font_size=800,
+    font_color=Colors:rgba("L", state.bottomRowAlpha),
+    color={0,0,0,1},
+  })
+  buttonLookup["L"] = buttonIndex
+  buttonIndex = buttonIndex + 1
+
+  local topButtonStartingPos = { x=-0.60, y=0.15, z=-0.6 }
+  local bottomButtonStartingPos = {
+    x=topButtonStartingPos.x,
+    y=topButtonStartingPos.y,
+    z=topButtonStartingPos.z + 1.2
+  }
+  local topButtonSpacing = 0.90
+  local topButtonWidth = 300
+  local topButtonHeight = leftBigButtonHeight / 2
+
+  local topButtonAttributes = {
+    click_function="doNothing",
+    function_owner=self,
+    position=topButtonStartingPos,
+    height=topButtonHeight,
+    width=topButtonWidth,
+    alignment=3,
+    scale={x=1.5, y=1.5, z=1.5},
+    font_size=250,
+  }
+
+  -- index 1
+  topButtonAttributes.label = "6"
+  topButtonAttributes.tooltip = "Gold per Coin"
+  topButtonAttributes.color = Colors:rgba("Gold")
+  topButtonAttributes.font_color = {0, 0, 0, 1}
+  self.createButton(topButtonAttributes)
+  buttonLookup["Gold"] = buttonIndex
+  buttonIndex = buttonIndex + 1
+
+  -- index 2
+  topButtonAttributes.position.x = topButtonAttributes.position.x + topButtonSpacing
+  topButtonAttributes.label = "18"
+  topButtonAttributes.tooltip = "Bonus XP"
+  topButtonAttributes.color = Colors:rgba("XP")
+  topButtonAttributes.font_color = Colors:rgba("White")
+  self.createButton(topButtonAttributes)
+  buttonLookup["XP"] = buttonIndex
+  buttonIndex = buttonIndex + 1
+
+  -- index 3
+  topButtonAttributes.position.x = topButtonAttributes.position.x + topButtonSpacing
+  topButtonAttributes.label = "T"
+  topButtonAttributes.tooltip = "Trap Damage"
+  topButtonAttributes.color = Colors:rgba("Trap")
+  topButtonAttributes.font_color = Colors:rgba("White")
+  self.createButton(topButtonAttributes)
+  buttonLookup["Trap"] = buttonIndex
+  buttonIndex = buttonIndex + 1
+
+  -- index 4
+  topButtonAttributes.position.x = topButtonAttributes.position.x + topButtonSpacing
+  topButtonAttributes.label = "H"
+  topButtonAttributes.tooltip = "Hazardous Terrain Damage"
+  topButtonAttributes.color = Colors:rgba("HazardousTerrain")
+  topButtonAttributes.font_color = Colors:rgba("White")
+  self.createButton(topButtonAttributes)
+  buttonLookup["Hazardous"] = buttonIndex
+  buttonIndex = buttonIndex + 1
+
+  -- Reset
+  topButtonAttributes.position = bottomButtonStartingPos
+
+  -- Player A
+  topButtonAttributes.label = "A"
+  topButtonAttributes.tooltip = "Player A"
+  topButtonAttributes.color = Colors:rgba("Black")
+  topButtonAttributes.font_color = Colors:rgba("Red", state.bottomRowAlpha)
+  topButtonAttributes.click_function = "changePlayerA"
+  self.createButton(topButtonAttributes)
+  buttonLookup["Player1"] = buttonIndex
+  buttonIndex = buttonIndex + 1
+
+  -- Player B
+  topButtonAttributes.position.x = topButtonAttributes.position.x + topButtonSpacing
+  topButtonAttributes.label = "B"
+  topButtonAttributes.tooltip = "Player B"
+  topButtonAttributes.color = Colors:rgba("Black")
+  topButtonAttributes.font_color = Colors:rgba("White", state.bottomRowAlpha)
+  topButtonAttributes.click_function = "changePlayerB"
+  self.createButton(topButtonAttributes)
+  buttonLookup["Player2"] = buttonIndex
+  buttonIndex = buttonIndex + 1
+
+  -- Player C
+  topButtonAttributes.position.x = topButtonAttributes.position.x + topButtonSpacing
+  topButtonAttributes.label = "C"
+  topButtonAttributes.tooltip = "Player C"
+  topButtonAttributes.color = Colors:rgba("Black")
+  topButtonAttributes.font_color = Colors:rgba("Blue", state.bottomRowAlpha)
+  topButtonAttributes.click_function = "changePlayerC"
+  self.createButton(topButtonAttributes)
+  buttonLookup["Player3"] = buttonIndex
+  buttonIndex = buttonIndex + 1
+
+  -- Player D
+  topButtonAttributes.position.x = topButtonAttributes.position.x + topButtonSpacing
+  topButtonAttributes.label = "D"
+  topButtonAttributes.tooltip = "Player D"
+  topButtonAttributes.color = Colors:rgba("Black")
+  topButtonAttributes.font_color = Colors:rgba("Green", state.bottomRowAlpha)
+  topButtonAttributes.click_function = "changePlayerD"
+  self.createButton(topButtonAttributes)
+  buttonLookup["Player4"] = buttonIndex
+  buttonIndex = buttonIndex + 1
+end
+
+function onFixedUpdate()
+  if state.locked ~= self.getLock() then
+    handleLockedStatusChange()
+  end
+end

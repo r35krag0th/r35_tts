@@ -1,0 +1,32 @@
+local target_card_name = "Medical Pack (50)"
+
+#include
+dealer_utils
+
+--- Find the Small Medpack Box using TTS Tags
+function find_container()
+    local containers = getObjectsWithTag("small_medpack_box")
+    if #containers ~= 1 then
+        return nil
+    end
+    return containers[1]
+end
+
+-- Deal a card to the Red Player
+-- @param object tts__Object
+-- @param object tts__Color
+function deal_to_red(object, actor_color)
+    deal_wrapper("Red", actor_color, find_container())
+end
+
+function deal_to_white(object, actor_color)
+    deal_wrapper("White", actor_color, find_container())
+end
+
+function deal_to_blue(object, actor_color)
+    deal_wrapper("Blue", actor_color, find_container())
+end
+
+function deal_to_green(object, actor_color)
+    deal_wrapper("Green", actor_color, find_container())
+end

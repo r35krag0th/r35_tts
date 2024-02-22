@@ -1,0 +1,113 @@
+function recall_all_cards()
+  cards = getObjectsWithTag("small_medpack_card")
+  printToAll("Recalling " .. target_card_name)
+  for index, card in ipairs(cards) do
+    self.putObject(card)
+  end
+end
+
+function get_player_class_vector(player_id, target_guid)
+  local play_area = getObjectFromGUID(target_guid or "9cf557")
+  if play_area == nil then
+    return nil
+  end
+
+  local casts = play_area.getTable("playerCasts")
+  if casts == nil then
+    return nil
+  end
+
+  return casts[player_id].class
+end
+
+function find_class_using_vector(v)
+  if v == nil then
+    return nil
+  end
+  local hitlist = Physics.cast({
+     origin = v,
+     direction = {0, 1, 0},
+     type = 3,
+     size = {1, 1, 1},
+     max_distance = 0,
+     debug = false
+  })
+  for _, c in pairs(hitlist) do
+     if c.hit_object.getName() == "Character Mat" then
+        return c.hit_object.getDescription()
+     end
+  end
+  return nil
+end
+
+function get_player_classes_by_color(target_guid)
+  local p1_class = find_class_using_vector(get_player_class_vector("P1"))
+  local p2_class = find_class_using_vector(get_player_class_vector("P2"))
+  local p3_class = find_class_using_vector(get_player_class_vector("P3"))
+  local p4_class = find_class_using_vector(get_player_class_vector("P4"))
+
+  return {
+    Red=p1_class,
+    White=p2_class,
+    Blue=p3_class,
+    Green=p4_class,
+  }
+end
+
+function get_player_classes_by_class(target_guid)
+  local by_color = get_player_classes_by_color(target_guid)
+  local output = {}
+
+  output[by_color["Red"]] = "Red"
+  output[by_color["White"]] = "White"
+  output[by_color["Blue"]] = "Blue"
+  output[by_color["Green"]] = "Green"
+
+  return output
+end
+
+function find_player(player_color)
+  for _, player in ipairs(Player.getPlayers()) do
+    if string.lower(player.color) == string.lower(player_color) then
+      return player
+    end
+  end
+  return nil
+end
+
+function find_class(player_id)
+  return getObjectFromGUID("9cf557").call("checkClass", {player_id})
+end
+
+function deal_wrapper(player_color, actor_color, source_container)
+  if source_container == nil then
+    source_container = self
+  end
+
+  if source_container.getQuantity() == 0 then
+    broadcastToAll("All " .. target_card_name .. " have been dealt out!", actor_color)
+    return
+  end
+
+  local destination_player = find_player(player_color)
+  local source_player = find_player(actor_color)
+
+  if destination_player ~= nil and source_player ~= nil then
+    broadcastToAll(
+      source_player.steam_name .. " gives a " .. target_card_name .. " to " .. destination_player.steam_name,
+      player_color
+    )
+  elseif destination_player ~= nil and source_player == nil then
+    broadcastToAll(
+      destination_player.steam_name .. " has been given " .. target_card_name,
+      destination_player.color
+    )
+  elseif destination_player == nil and source_player != nil then
+    broadcastToAll(
+      source_player.steam_name .. " gives a " .. target_card_name .. " to " .. player_color,
+      player_color
+    )
+  end
+
+  source_container.deal(1, player_color)
+end

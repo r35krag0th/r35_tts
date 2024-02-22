@@ -1,0 +1,10 @@
+-- this returns a card to the sawbones player
+function returnToSawbones(object, actor_color)
+  local current_classes = get_player_classes_by_class("9cf557")
+  if current_classes["Sawbones"] == nil then
+    return
+  end
+
+  broadcastToAll("Returning " .. self.getName() .. " to Sawbones.", actor_color)
+  self.deal(1, current_classes["Sawbones"])
+end

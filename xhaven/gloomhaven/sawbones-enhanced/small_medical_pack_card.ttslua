@@ -1,0 +1,64 @@
+#include ../../utils/table_length
+#include dealer_utils
+
+-- Making these smarter
+function onLoad(save_state)
+  if saved_data ~= "" then
+    local loaded_data = JSON.decode(save_state)
+    -- there's nothing here
+  end
+
+  createAll()
+end
+
+function createAll()
+  self.createButton({
+    label="Return",
+    click_function="returnToBox",
+    function_owner=self,
+    position={
+      x=0,
+      y=1.05,
+      z=1.2,
+    },
+    height=200,
+    width=400,
+    alignment=3,
+    scale={
+      x=0.5,
+      y=0.5,
+      z=0.5,
+    },
+    font_size=100,
+    font_color={
+      r=1.00,
+      g=0.00,
+      b=0.00,
+      a=100,
+    }
+  })
+end
+
+function removeAll()
+end
+
+function returnToBox(object, actor_color)
+  boxes = getObjectsWithTag("small_medpack_box")
+  num_boxes_found = tablelength(boxes)
+  if num_boxes_found == 1 then
+    local actor = find_player(actor_color)
+    if actor ~= nil then
+      broadcastToAll(
+        actor.steam_name .. " is returning [00FFFF]" .. self.getName() .. "[-] to the box.",
+        actor_color
+      )
+    else
+      log("actor was nil bruh :( --> actor color was: " .. actor_color, "debug")
+    end
+    boxes[1].putObject(self)
+  elseif num_boxes_found == 0 then
+    print("Unable to find Small Medpack Box")
+  else
+    print("There's more than one Small Medpack Box")
+  end
+end

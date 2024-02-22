@@ -1,0 +1,13 @@
+function booleanToString(value, trueText, falseText)
+  if value == nil then return "nil" end
+  if trueText == nil then trueText = "true" end
+  if falseText == nil then falseText = "false" end
+
+  if value then return trueText end
+  return falseText
+end
+
+function valueOrNilString(value)
+  if value == nil then return "nil" end
+  return value
+end

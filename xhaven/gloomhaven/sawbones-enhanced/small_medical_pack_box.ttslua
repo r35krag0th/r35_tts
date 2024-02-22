@@ -1,0 +1,68 @@
+local target_card_name = "Medical Pack (50)"
+
+#include dealer_utils
+
+function tryObjectEnter(object)
+    return object.getName() == target_card_name
+end
+
+function onLoad(save_state)
+  local button_spacing = 0.65
+  local params = {
+    label = " ",
+    click_function = "deal_to_red",
+    function_owner = self,
+    position = {
+      x = -1,     -- left/right
+      y = -1.7,   -- up/down
+      z = 1,      -- front/back
+    },
+    height = 300,
+    width = 300,
+    color = "Red",
+    font_size = 100,
+    font_color = {1, 1, 1, 1}
+  }
+
+  self.createButton(params)
+
+  params.color = "White"
+  params.click_function = "deal_to_white"
+  params.position.x = params.position.x + button_spacing
+  self.createButton(params)
+
+  params.color = "Blue"
+  params.click_function = "deal_to_blue"
+  params.position.x = params.position.x + button_spacing
+  self.createButton(params)
+
+  params.color = "Green"
+  params.click_function = "deal_to_green"
+  params.position.x = params.position.x + button_spacing
+  self.createButton(params)
+
+  params.label = "Recall All"
+  params.color = "Black"
+  params.click_function = "recall_all_cards"
+  params.position.x = 0
+  params.position.z = 1.7
+  params.width = 1200
+  self.createButton(params)
+end
+
+
+function deal_to_red(object, actor_color)
+  deal_wrapper("Red", actor_color, self)
+end
+
+function deal_to_white(object, actor_color)
+  deal_wrapper("White", actor_color, self)
+end
+
+function deal_to_blue(object, actor_color)
+  deal_wrapper("Blue", actor_color, self)
+end
+
+function deal_to_green(object, actor_color)
+  deal_wrapper("Green", actor_color, self)
+end
