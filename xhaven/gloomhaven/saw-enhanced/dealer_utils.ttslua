@@ -102,7 +102,7 @@ function deal_wrapper(player_color, actor_color, source_container)
       destination_player.steam_name .. " has been given " .. target_card_name,
       destination_player.color
     )
-  elseif destination_player == nil and source_player != nil then
+  elseif destination_player == nil and source_player ~= nil then
     broadcastToAll(
       source_player.steam_name .. " gives a " .. target_card_name .. " to " .. player_color,
       player_color

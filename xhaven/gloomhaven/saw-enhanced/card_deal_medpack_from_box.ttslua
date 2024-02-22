@@ -1,7 +1,6 @@
 local target_card_name = "Medical Pack (50)"
 
-#include
-dealer_utils
+#include dealer_utils
 
 --- Find the Small Medpack Box using TTS Tags
 function find_container()
