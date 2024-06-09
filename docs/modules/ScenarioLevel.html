@@ -1,0 +1,517 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>r35 Tabletop Simulator Libraries</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>r35 TTS Libraries</h1>
+
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+<li><a href="#Local_Functions">Local Functions</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><strong>ScenarioLevel</strong></li>
+  <li><a href="../modules/XHavenColors.html">XHavenColors</a></li>
+  <li><a href="../modules/middleclass.html">middleclass</a></li>
+  <li><a href="../modules/r35_tts.luaunit.html">r35_tts.luaunit</a></li>
+  <li><a href="../modules/stringutils.html">stringutils</a></li>
+  <li><a href="../modules/tableutils.html">tableutils</a></li>
+  <li><a href="../modules/tagutils.html">tagutils</a></li>
+  <li><a href="../modules/vectorutils.html">vectorutils</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>ScenarioLevel</code></h1>
+<p>
+
+</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#L">L ()</a></td>
+	<td class="summary">The actual scenario level, or more frequently called "L" in the game's
+ printed materials.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ScenarioLevel.static:fromState">ScenarioLevel.static:fromState (state)</a></td>
+	<td class="summary">Hydrate a <a href="../modules/ScenarioLevel.html#">ScenarioLevel</a> using persisted state.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ScenarioLevel.static:usingDefaults">ScenarioLevel.static:usingDefaults ()</a></td>
+	<td class="summary">Create a new <a href="../modules/ScenarioLevel.html#">ScenarioLevel</a> using defaults.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#bonusExperience">bonusExperience ()</a></td>
+	<td class="summary">Get the bonus experience rewarded for completing a scenario successfully.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#decrement">decrement (playerNumber)</a></td>
+	<td class="summary">Decrement the player's level by 1.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getLevel">getLevel (playerNumber)</a></td>
+	<td class="summary">Gets the player level for the given <code>playerNumber</code> or returns <code>1</code> if
+ not found.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#goldPerCoin">goldPerCoin ()</a></td>
+	<td class="summary">Get the gold-per-coin value for the current Scenario Level.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#hazardousTerrainDamage">hazardousTerrainDamage ()</a></td>
+	<td class="summary">Get the hazardous terrain damage for the current Scenario Level.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#increment">increment (playerNumber)</a></td>
+	<td class="summary">Increment the player's level by 1.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#initialize">initialize (a, b, c, d)</a></td>
+	<td class="summary">Initializes a Scenario Level with the given player levels.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#monsterLevel">monsterLevel ()</a></td>
+	<td class="summary">Get the monster level for the current Scenario level.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#toState">toState ()</a></td>
+	<td class="summary">Get the persistable state so it can be saved on the TTS object.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#trapDamage">trapDamage ()</a></td>
+	<td class="summary">Get the trap damage for the current Scenario Level.</td>
+	</tr>
+</table>
+<h2><a href="#Local_Functions">Local Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#_changePlayerLevel">_changePlayerLevel (self, playerNumber, levelDifference)</a></td>
+	<td class="summary">Update the player's level with the given <code>levelDifference</code> and then calls <a href="../modules/ScenarioLevel.html#_updateTotalPlayers">_updateTotalPlayers</a>
+ to update the total player count.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#_updateTotalPlayers">_updateTotalPlayers (self)</a></td>
+	<td class="summary">Updates the total player count based on the TTS Players</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "L"></a>
+    <strong>L ()</strong>
+    </dt>
+    <dd>
+    The actual scenario level, or more frequently called "L" in the game's
+ printed materials.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        a table containing <code>raw</code>, <code>roundedUp</code>, and <code>roundedDown</code> values.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ScenarioLevel.static:fromState"></a>
+    <strong>ScenarioLevel.static:fromState (state)</strong>
+    </dt>
+    <dd>
+    Hydrate a <a href="../modules/ScenarioLevel.html#">ScenarioLevel</a> using persisted state.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">state</span>
+         table
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">ScenarioLevel</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ScenarioLevel.static:usingDefaults"></a>
+    <strong>ScenarioLevel.static:usingDefaults ()</strong>
+    </dt>
+    <dd>
+    Create a new <a href="../modules/ScenarioLevel.html#">ScenarioLevel</a> using defaults.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">ScenarioLevel</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "bonusExperience"></a>
+    <strong>bonusExperience ()</strong>
+    </dt>
+    <dd>
+    Get the bonus experience rewarded for completing a scenario successfully.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">int</span></span>
+        bonus experience points awarded
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "decrement"></a>
+    <strong>decrement (playerNumber)</strong>
+    </dt>
+    <dd>
+    Decrement the player's level by 1.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">playerNumber</span>
+            <span class="types"><span class="type">int</span></span>
+         the player number to alter.
+        </li>
+    </ul>
+
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/ScenarioLevel.html#_changePlayerLevel">_changePlayerLevel</a>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "getLevel"></a>
+    <strong>getLevel (playerNumber)</strong>
+    </dt>
+    <dd>
+    Gets the player level for the given <code>playerNumber</code> or returns <code>1</code> if
+ not found.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">playerNumber</span>
+            <span class="types"><span class="type">int</span></span>
+         The player number to look up (1-4)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">int</span></span>
+        The player's level
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "goldPerCoin"></a>
+    <strong>goldPerCoin ()</strong>
+    </dt>
+    <dd>
+    Get the gold-per-coin value for the current Scenario Level.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">int</span></span>
+        gold earned per coin looted
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "hazardousTerrainDamage"></a>
+    <strong>hazardousTerrainDamage ()</strong>
+    </dt>
+    <dd>
+    Get the hazardous terrain damage for the current Scenario Level.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">int</span></span>
+        damage amount
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "increment"></a>
+    <strong>increment (playerNumber)</strong>
+    </dt>
+    <dd>
+    Increment the player's level by 1.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">playerNumber</span>
+            <span class="types"><span class="type">int</span></span>
+         the player number to alter.
+        </li>
+    </ul>
+
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/ScenarioLevel.html#_changePlayerLevel">_changePlayerLevel</a>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "initialize"></a>
+    <strong>initialize (a, b, c, d)</strong>
+    </dt>
+    <dd>
+    Initializes a Scenario Level with the given player levels. </p>
+
+<p> After initialization <a href="../modules/ScenarioLevel.html#_updateTotalPlayers">_updateTotalPlayers</a> is automatically
+ called.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">a</span>
+            <span class="types"><span class="type">int</span></span>
+         Red Player's level
+        </li>
+        <li><span class="parameter">b</span>
+            <span class="types"><span class="type">int</span></span>
+         White Player's level
+        </li>
+        <li><span class="parameter">c</span>
+            <span class="types"><span class="type">int</span></span>
+         Blue Player's level
+        </li>
+        <li><span class="parameter">d</span>
+            <span class="types"><span class="type">int</span></span>
+         Green Player's level
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "monsterLevel"></a>
+    <strong>monsterLevel ()</strong>
+    </dt>
+    <dd>
+    Get the monster level for the current Scenario level.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">int</span></span>
+        monster level
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "toState"></a>
+    <strong>toState ()</strong>
+    </dt>
+    <dd>
+    Get the persistable state so it can be saved on the TTS object.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        state table
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "trapDamage"></a>
+    <strong>trapDamage ()</strong>
+    </dt>
+    <dd>
+    Get the trap damage for the current Scenario Level.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">int</span></span>
+        damage amount
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Local_Functions"></a>Local Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "_changePlayerLevel"></a>
+    <strong>_changePlayerLevel (self, playerNumber, levelDifference)</strong>
+    </dt>
+    <dd>
+
+<p>Update the player's level with the given <code>levelDifference</code> and then calls <a href="../modules/ScenarioLevel.html#_updateTotalPlayers">_updateTotalPlayers</a>
+ to update the total player count. </p>
+
+<ul>
+    <li>If the player's level would go below <strong>zero</strong> then it will be set to <strong>one</strong>.</li>
+    <li>If the player's level would go above <strong>nine</strong> then it will be set to <strong>nine</strong>.</li>
+</ul>
+
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+         self
+        </li>
+        <li><span class="parameter">playerNumber</span>
+         number is the index representing the color slots for Players
+        </li>
+        <li><span class="parameter">levelDifference</span>
+         number is the amount the player's level will change by.
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "_updateTotalPlayers"></a>
+    <strong>_updateTotalPlayers (self)</strong>
+    </dt>
+    <dd>
+    Updates the total player count based on the TTS Players  This is based on the number of players contained in <code>players</code> that
+ are not null.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+         self
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/lunarmodules/LDoc">LDoc 1.5.0</a></i>
+<i style="float:right;">Last updated 2024-03-17 17:31:26 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

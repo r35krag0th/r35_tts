@@ -1,11 +1,13 @@
+LOC_BIN = "C:\Users\xbl\AppData\Roaming\luarocks\bin\ldoc.bat"
+
 docs:
 	@# ldoc --all --dir docs src
-	ldoc .
+	$(LOC_BIN) .
 
 docs-with-config:
-	ldoc --all --config docs/config.ld
+	$(LOC_BIN) --all --config docs/config.ld
 
 markdown-docs:
-	ldoc --all --dir docs --format markdown src
+	$(LOC_BIN) --all --verbose --dir docs --format markdown .
 
 .PHONY: docs

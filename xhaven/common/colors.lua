@@ -1,22 +1,9 @@
+--- A collection of canned colors for the XHaven games (and TTS)
+-- @module XHavenColors
+
 local class = require 'r35_tts.middleclass'
 
----@class XHavenColors
----@field Colors
 local XHavenColors = class('XHavenColors')
-
--- setmetatable(XHavenColors, {})
-
----@shape RGBTableType
----@field r float
----@field g float
----@field b float
-
----@shape RGBATableType : RGBTableType
----@field a float
-
----@param hex string
----@param alpha float
----@return RGBATableType
 
 local colors = {
   ["Gold"] = {
@@ -102,7 +89,14 @@ local colors = {
     g = 0.7019,
     b = 0.1686,
     a = 1,
-  }
+  },
+  ["Wound"] = {},
+  ["Immobilize"] = {},
+  ["Strengthen"] = {},
+  ["Disarm"] = {},
+  ["Curse"] = {},
+  ["Damage"] = {},
+  ["Bless"] = {},
 }
 
 --- Check if a named color exists
@@ -131,7 +125,8 @@ end
 
 --- Returns the named color as a table with RGBA values
 ---
----@param name string
+---@param name string Color name to look up
+---@param alphaOverride string Override the alpha channel value (0-100)
 ---@return tts__Color
 function XHavenColors.static:rgba(name, alphaOverride)
   if XHavenColors:has(name) then

@@ -1,3 +1,8 @@
+--- "middleclass" v4.1.1 by "kikito" &rarr; [project github](https://github.com/kikito/middleclass)
+---
+-- @module middleclass
+
+
 local middleclass = {
   _VERSION     = 'middleclass v4.1.1',
   _DESCRIPTION = 'Object Orientation for Lua',

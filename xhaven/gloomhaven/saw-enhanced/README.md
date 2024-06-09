@@ -1,5 +1,7 @@
 # "Saw" Enhanced
 
+**Note:** This needs to be cleaned up a lot.
+
 This directory contains **_fancy_** med packs that can be dealt directly to a player color
 by pushing the button on the card.  It also has _recall_ buttons to get all your cards back
 if they haven't been returned to you.

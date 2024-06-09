@@ -1,0 +1,130 @@
+-- Diviner Rift Controller
+
+local tableutils = require("r35_tts.utils.tables")
+local tagutils = require("r35_tts.utils.tags")
+local vectorutils = require("r35_tts.utils.vectors")
+
+VERSION = "1.0"
+BASE_URL = "https://cdn.r35.net/tts/gloomhaven"
+
+RIFT_TAG = "r35 Diviner Rift"
+MAX_RIFTS = 5
+
+RIFT_OVERLAY_IMAGES = {
+  WoundImmobilize = BASE_URL .. "/rift_overlay/Rift_Wound_Immobilize.png",
+  Strengthen = BASE_URL .. "/rift_overlay/Rift_Strengthen.png",
+  Disarm = BASE_URL .. "/rift_overlay/Rift_Disarm.png",
+  CurseDamage = BASE_URL .. "/rift_overlay/Rift_Curse_Damage.png",
+  Bless = BASE_URL .. "/rift_overlay/Rift_Bless.png",
+  NoOverlay = BASE_URL .. "/misc/Rift.png"
+}
+
+RIFT_OVERLAY_IMAGES_TO_DESCRIPTION = {
+  [RIFT_OVERLAY_IMAGES.WoundImmobilize] = "[F4641D]Wound[-] & [B02221]Immobilize[-]",
+  [RIFT_OVERLAY_IMAGES.Strengthen] = "[5BC0EB]Strengthen[-]",
+  [RIFT_OVERLAY_IMAGES.Disarm] = "[6699CC]DISARM[-]",
+  [RIFT_OVERLAY_IMAGES.CurseDamage] = "[BC13FE]CURSE[-] & [FF0000]1 dmg[-]",
+  [RIFT_OVERLAY_IMAGES.Bless] = "[FFF275]BLESS[-]",
+  [RIFT_OVERLAY_IMAGES.NoOverlay] = "[i]Inert[/i]"
+}
+
+CYCLE_ORDER = {
+  RIFT_OVERLAY_IMAGES.NoOverlay,
+  RIFT_OVERLAY_IMAGES.WoundImmobilize,
+  RIFT_OVERLAY_IMAGES.Strengthen,
+  RIFT_OVERLAY_IMAGES.Disarm,
+  RIFT_OVERLAY_IMAGES.CurseDamage,
+  RIFT_OVERLAY_IMAGES.Bless,
+}
+
+TOTAL_CYCLES_AVAILABLE = tableutils.length(CYCLE_ORDER)
+CURRENT_CYCLE_INDEX = 1
+
+function onLoad(save_state)
+  if save_state ~= "" then
+    -- Load the State
+    print("Non-empty state; loading")
+  else
+    -- Default State
+    print("Empty state; using defaults")
+  end
+
+  createButtons()
+end
+
+function createButtons()
+  local initialPosition = Vector(-1, 1.7, 1)
+  local params = {
+    label = "boop",
+    click_function = "riftCount",
+    function_owner = self,
+    position = vectorutils.vec2pos(initialPosition),
+    height = 300,
+    width = 300,
+    color = "Red",
+    font_size = 100,
+    font_color = {1, 1, 1, 1},
+  }
+
+  local currentPosition = initialPosition.copy()
+  local buttonSpacing = Vector(0, 0.5, 0)
+  self.createButton(params)
+end
+
+function riftCount()
+  print("You have " .. tagutils.countOfNonContainersByTag(RIFT_TAG) .. " rifts out")
+
+  local next_image_index = CURRENT_CYCLE_INDEX + 1
+  if next_image_index > TOTAL_CYCLES_AVAILABLE then
+    next_image_index = 1
+  end
+
+  print("Current Cycle Index: " .. CURRENT_CYCLE_INDEX .. " -> " .. CYCLE_ORDER[CURRENT_CYCLE_INDEX])
+  print("Next Cycle Index: " .. next_image_index .. " -> " .. CYCLE_ORDER[next_image_index])
+
+  CURRENT_CYCLE_INDEX = next_image_index
+
+  local rifts = tagutils.findNonContainersByTag(RIFT_TAG)
+  for _, obj in pairs(rifts) do
+    print("Setting rift image...")
+    local co = obj.getCustomObject()
+
+    -- set the image to the next image in the revolving door of options
+    co.image = CYCLE_ORDER[CURRENT_CYCLE_INDEX]
+
+    -- configure the custom object with the new image
+    obj.setCustomObject(co)
+
+    -- required to make the image change happen
+    obj.reload()
+  end
+  -- self.setCustomObject({
+  --   image = RIFT_OVERLAY_IMAGES.Strengthen,
+  -- })
+end
+
+function onObjectLeaveContainer(container, object)
+  local currentRiftsCount = tagutils.countOfNonContainersByTag(RIFT_TAG)
+  print("(onObjectLeaveContainer) There are [FF0000]" .. currentRiftsCount .. "[-] rifts out.")
+  if tagutils.countOfNonContainersByTag(RIFT_TAG) > MAX_RIFTS then
+    print("You are at max rifts! (" .. MAX_RIFTS .. ")")
+    destroyObject(object)
+    return
+  end
+
+  print("(onObjectLeaveContainer) --- Object " .. object.guid .. " left container " .. container.guid)
+  print("(onObjectLeaveContainer) --- Container -> " .. container.getName())
+  log(container.getTags(), "container tags")
+  if container.hasTag(RIFT_TAG) then
+    print("(onObjectLeaveContainer) --- pulled from a rift stack")
+  end
+
+  if object.hasTag(RIFT_TAG) then
+    print("(onObjectLeaveContainer) --- pulled a rift out of a container!")
+    object.highlightOn({
+      r=0.5,
+      g=1,
+      b=1,
+    })
+  end
+end

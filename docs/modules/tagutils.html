@@ -1,0 +1,235 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>r35 Tabletop Simulator Libraries</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>r35 TTS Libraries</h1>
+
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Containers">Containers</a></li>
+<li><a href="#Non_Containers">Non-Containers</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/ScenarioLevel.html">ScenarioLevel</a></li>
+  <li><a href="../modules/XHavenColors.html">XHavenColors</a></li>
+  <li><a href="../modules/middleclass.html">middleclass</a></li>
+  <li><a href="../modules/r35_tts.luaunit.html">r35_tts.luaunit</a></li>
+  <li><a href="../modules/stringutils.html">stringutils</a></li>
+  <li><a href="../modules/tableutils.html">tableutils</a></li>
+  <li><strong>tagutils</strong></li>
+  <li><a href="../modules/vectorutils.html">vectorutils</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>tagutils</code></h1>
+<p>Generic TTS Tag Helper Functions</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Containers">Containers</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#countOfContainersByTag">countOfContainersByTag (tag)</a></td>
+	<td class="summary">Gets a count of objects that are decks, containers, or stacks
+ bearing the specifed tag.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#findContainersByTag">findContainersByTag (tag)</a></td>
+	<td class="summary">Attempts to locate objects that are decks, stacks, or containers
+ bearing the specified tag.</td>
+	</tr>
+</table>
+<h2><a href="#Non_Containers">Non-Containers</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#countOfNonContainersByTag">countOfNonContainersByTag (tag)</a></td>
+	<td class="summary">Gets a count of objects that are not decks, containers, or stacks
+ bearing the specifed tag.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#findNonContainersByTag">findNonContainersByTag (tag)</a></td>
+	<td class="summary">Attempts to locate objects that are not decks, stacks, or containers
+ bearing the specified tag.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Containers"></a>Containers</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "countOfContainersByTag"></a>
+    <strong>countOfContainersByTag (tag)</strong>
+    </dt>
+    <dd>
+    Gets a count of objects that are decks, containers, or stacks
+ bearing the specifed tag.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">tag</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">int</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "findContainersByTag"></a>
+    <strong>findContainersByTag (tag)</strong>
+    </dt>
+    <dd>
+    Attempts to locate objects that are decks, stacks, or containers
+ bearing the specified tag.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">tag</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        a list (table) of objects found
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Non_Containers"></a>Non-Containers</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "countOfNonContainersByTag"></a>
+    <strong>countOfNonContainersByTag (tag)</strong>
+    </dt>
+    <dd>
+    Gets a count of objects that are not decks, containers, or stacks
+ bearing the specifed tag.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">tag</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">int</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "findNonContainersByTag"></a>
+    <strong>findNonContainersByTag (tag)</strong>
+    </dt>
+    <dd>
+    Attempts to locate objects that are not decks, stacks, or containers
+ bearing the specified tag.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">tag</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        a list (table) of objects found
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/lunarmodules/LDoc">LDoc 1.5.0</a></i>
+<i style="float:right;">Last updated 2024-03-17 17:31:26 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
